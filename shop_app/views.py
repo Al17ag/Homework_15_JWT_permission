@@ -17,17 +17,34 @@ from django_filters.rest_framework import DjangoFilterBackend
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [AllowAny]  # Все пользователи могут видеть категории
 
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PUT', 'DELETE']:
+            self.permission_classes = [IsAdminUser]  # Только админы могут создавать, обновлять и удалять категории
+        return super().get_permissions()
 
 class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
+    permission_classes = [AllowAny]  # Все пользователи могут видеть поставщиков
+
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PUT', 'DELETE']:
+            self.permission_classes = [IsAdminUser]  # Только админы могут создавать, обновлять и удалять поставщиков
+        return super().get_permissions()
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('category', 'price')
+    permission_classes = [AllowAny]  # Все пользователи могут видеть продукты
+
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PUT', 'DELETE']:
+            self.permission_classes = [IsAdminUser]  # Только админы могут создавать, обновлять и удалять продукты
+        return super().get_permissions()
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
